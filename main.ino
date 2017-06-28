@@ -14,20 +14,32 @@
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos tempos de chamada para cada thread--------------------------------//
 //--------------------------------------------------------------------------------------------//
-#define tempo_operacao_robo 50  //Tempo de ciclos de operação do robô.
-#define tempo_sensor_linha  200 //Tempo de leitura dos sensores de linha em mili segundos
-#define tempo_sensor_ir     200 //Tempo de leitura dos sensores de infra-vermelho
-#define tempo_sensor_sonoro 300 //Tempo de leitura dos sensores sonoros
+#define tempo_operacao_robo  50   //Tempo de ciclos de operação do robô.
+#define tempo_sensor_linha   200  //Tempo de leitura dos sensores de linha em mili segundos
+#define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho
+#define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial
 //--------------------------------------------------------------------------------------------//
 
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos pinos usados no projeto--------------------------------//
 //--------------------------------------------------------------------------------------------//
+
+//Pinos do sensor sonoro
 #define echo 5 //Pino do sensor ultra sônico correspndente ao echo
 #define trig 4 //Pino do sensor ultra sônico correspndente ao Trig
+
+//Pinos dos sensores de linha
+#define pin_line_sensor1 A0
+#define pin_line_sensor2 A1
+#define pin_line_sensor3 A2
+
 //--------------------------------------------------------------------------------------------//
 
+//Valor limiar de detecção da linha
+#define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
+
+#define velocidade_serial 19200 //Velocidade da serial
 
 //Ativar ou desativar o modo de debug
 #define modo_debug_serial 1 //"1" para ativar e "0" para desativar o modo de debug
@@ -48,13 +60,33 @@ Thread DEBUG_SERIAL;
 //----------------------------------------------------//
 //-------Definindo as Variáveis-----------------------//
 //----------------------------------------------------//
+
 float distancia_sonora; //Distância do sensor ultra sônico
+
+//Armazena o estado dos sensores de linha "true" para linha detectada e "false" para linha não detectada
+bool state_line_sensor1 = false;
+bool state_line_sensor2 = false;
+bool state_line_sensor3 = false;
+
 //----------------------------------------------------//
 
 
 
 //Função para fazer leitura dos sensores de linha
 void LeituraSensorDeLinha(){
+	int sensor1, sensor2, sensor3;
+	sensor1 = analogRead(pin_line_sensor1);
+	sensor2 = analogRead(pin_line_sensor2);
+	sensor3 = analogRead(pin_line_sensor1);
+
+	if(sensor1>= threshold_line_sensors && sensor1 < threshold_line_sensors + 100) state_line_sensor1 = true;
+	else state_line_sensor1 = false;
+
+	if(sensor2>= threshold_line_sensors && sensor2 < threshold_line_sensors + 100) state_line_sensor2 = true;
+	else state_line_sensor2 = false;
+
+	if(sensor3>= threshold_line_sensors && sensor2 < threshold_line_sensors + 100) state_line_sensor2 = true;
+	else state_line_sensor2 = false;
 
 }
 
@@ -97,6 +129,7 @@ void DebugSerial(){
 
 //Função que irá setar a configuração dos pinos do arduino
 void SetPin(){
+
   //Pino trig do sensor ultra sônico
   pinMode(trig, OUTPUT);
   digitalWrite(trig, LOW); //Deixar trigger em nível lógico baixo
@@ -107,17 +140,25 @@ void SetPin(){
 
 }
 
+//Função para iniciar a comunicação serial
+void BeginSerial(){
+
+	//Condição para iniciar a serial
+	if(modo_debug_serial){
+    	Serial.begin(velocidade_serial);
+    	Serial.print("Modo debug_serial iniciado\n");
+	}
+
+}
+
 
 void setup(){
 
   //Chamada de função para configuração dos pinos
   SetPin();
 
-  //Condição para iniciar modo debug ou não
-  if(modo_debug_serial){
-    Serial.begin(9600);
-    Serial.print("Modo debug_serial iniciado\n");
-  }
+  //Chamada da função que inicia a serial
+  BeginSerial();
 
   //----------------------------------------------------------//
   //-----------Setando as configurações das threads-----------//
@@ -147,6 +188,12 @@ void setup(){
 }
 
 void loop(){
-  ROBO.run();
+	
+	//Chama o thread controller
+	ROBO.run();
+  	
+  	//Habilita ou não a thread de debug
+  	if(modo_debug_serial)	DEBUG_SERIAL.enabled = true;
+  	else DEBUG_SERIAL.enabled = false;
 
 }
