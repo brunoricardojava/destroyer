@@ -14,29 +14,36 @@
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos tempos de chamada para cada thread--------------------------------//
 //--------------------------------------------------------------------------------------------//
-#define tempo_operacao_robo  50   //Tempo de ciclos de operação do robô.
-#define tempo_sensor_linha   200  //Tempo de leitura dos sensores de linha em mili segundos
-#define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho
-#define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros
-#define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial
+#define tempo_logica_robo    50   //Tempo de ciclos de operação do robô.
+#define tempo_motor			 100  //Tempo de controle dos motores.
+#define tempo_sensor_linha   200  //Tempo de leitura dos sensores de linha em mili segundos.
+#define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho.
+#define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros.
+#define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial.
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos pinos usados no projeto-------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 
-//Pinos do sensor sonoro
-#define echo 5 //Pino do sensor ultra sônico correspndente ao echo
-#define trig 4 //Pino do sensor ultra sônico correspndente ao Trig
-
 //Pinos dos sensores de linha
 #define pin_line_sensor1 A0
 #define pin_line_sensor2 A1
 #define pin_line_sensor3 A2
 
+//Pinos do sensor sonoro
+#define echo 5 //Pino do sensor ultra sônico correspndente ao echo
+#define trig 4 //Pino do sensor ultra sônico correspndente ao Trig
+
 //Pinos dos sensores de IR
 #define pin_ir1 6
 #define pin_ir2 7
+
+//Pinos dos motores
+#define pin1_motor 8
+#define pin2_motor 9
+#define pin3_motor 10
+//#define pin4_motor 11 //Caso usemos 4 pinos de controle
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +56,7 @@
 #define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
 
 //Define a velocidade da serial
-#define velocidade_serial 115200 //9600// 
+#define velocidade_serial 115200 //9600 
 
 //Ativar ou desativar o modo de debug
 #define modo_debug_serial 1 //"1" para ativar e "0" para desativar o modo de debug
@@ -65,7 +72,8 @@ ThreadController ROBO;
 Thread LEITURA_SENSOR_DE_LINHA;
 Thread LEITURA_SENSOR_IR;
 Thread LEITURA_SENSOR_SONORO;
-Thread CONTROLLER_ROBO;
+Thread LOGICA_ROBO;
+Thread CONTROLE_MOTOR;
 Thread DEBUG_SERIAL;
 //----------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +82,24 @@ Thread DEBUG_SERIAL;
 //----------------------------------------------------------------------------------------------//
 //-------Definindo as Variáveis-----------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------//
+
+// Variável "state" define o estado do robô.
+// Vamos usar essa variável como parametro de uma maquina de estado.
+// Alguns estados são:
+// Parado-'P': Robô parado;
+// Busca--'B': Robô entra em modo de busca;
+// Alvo---'A': Robô encontrou seu alvo
+// Outros estado podem ser configurados aqui...
+char state = 'P';
+
+// Variável "config_motor" define a configuração dos motores
+// As configurações possiveis do motor são:
+// Parado---'P': Robô parado;
+// Frente---'F': Robô vai pra frente;
+// Direita--'D': Robô vira pra direita;
+// Esquerda-'E': Robô vira pra esquerda;
+// Ré-------'R': Robô vai pra trás;
+char config_motor = 'P';
 
 //Distância do sensor ultra sônico
 float distancia_sonora = 0; 
@@ -135,6 +161,13 @@ void LeituraSensorSonoro(){
 
 }
 
+
+// Aqui dentro será definido a logica do robõ de acordo com o estado das variáveis
+// ou seja a logica de ataque e defesa...! ahahahah
+void LogicaDoRobo(){
+
+}
+
 //Função para controle dos motores
 void ControleDosMotores(){
 
@@ -167,6 +200,13 @@ void SetPin(){
   pinMode(pin_ir1, INPUT);
   pinMode(pin_ir2, INPUT);
 
+  //Pino que controlam os motores
+  pinMode(pin1_motor, OUTPUT);
+  pinMode(pin2_motor, OUTPUT);
+  pinMode(pin3_motor, OUTPUT);
+  //pinMode(pin4_motor, OUTPUT); //Caso usemos 4 pinos de controle
+
+
 }
 
 //Função para iniciar a comunicação serial
@@ -198,8 +238,11 @@ void ConfigThreads(){
 	LEITURA_SENSOR_SONORO.onRun(LeituraSensorSonoro);
 
 	//Controle do robô
-	CONTROLLER_ROBO.setInterval(tempo_operacao_robo);
-	CONTROLLER_ROBO.onRun(ControleDosMotores);
+	LOGICA_ROBO.setInterval(tempo_logica_robo);
+	LOGICA_ROBO.onRun(LogicaDoRobo);
+
+	CONTROLE_MOTOR.setInterval(tempo_motor);
+	CONTROLE_MOTOR.onRun(ControleDosMotores);
 
 	//Debug da serial
 	DEBUG_SERIAL.setInterval(tempo_debug_serial);
@@ -209,7 +252,8 @@ void ConfigThreads(){
 	ROBO.add(&LEITURA_SENSOR_DE_LINHA);
 	ROBO.add(&LEITURA_SENSOR_IR);
 	ROBO.add(&LEITURA_SENSOR_SONORO);
-	ROBO.add(&CONTROLLER_ROBO);
+	ROBO.add(&LOGICA_ROBO);
+	ROBO.add(&CONTROLE_MOTOR);
 	ROBO.add(&DEBUG_SERIAL);
 	//----------------------------------------------------------//
 
