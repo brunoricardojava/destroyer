@@ -27,9 +27,9 @@
 //--------------------------------------------------------------------------------------------//
 
 //Pinos dos sensores de linha
-#define pin_line_sensor1 A0
-#define pin_line_sensor2 A1
-#define pin_line_sensor3 A2
+#define pin_line_sensor1 0
+#define pin_line_sensor2 1
+#define pin_line_sensor3 2
 
 //Pinos do sensor sonoro
 #define echo 5 //Pino do sensor ultra sônico correspndente ao echo
