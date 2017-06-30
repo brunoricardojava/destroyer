@@ -165,11 +165,68 @@ void LeituraSensorSonoro(){
 // Aqui dentro será definido a logica do robõ de acordo com o estado das variáveis
 // ou seja a logica de ataque e defesa...! ahahahah
 void LogicaDoRobo(){
+	switch(state){
+		case 'P':
+			config_motor = 'P';
+			break;
+		case 'B':
+			//Lógica de busca do robô
+			break;
+		case 'A':
+			//Lógica de ataque do robô
+			break;
+		//Novos estados do robô podem ser inseridos aqui...
+		default:
+			config_motor = 'P';
+			break;
+	}
 
 }
 
 //Função para controle dos motores
 void ControleDosMotores(){
+	switch(config_motor){
+		case 'P':
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+
+		case 'F':
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+
+		case 'D':
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+
+		case 'E':
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+
+		case 'R':
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+		default:
+			digitalWrite(pin1_motor, );
+			digitalWrite(pin2_motor, );
+			digitalWrite(pin3_motor, );
+			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			break;
+	}
 
 }
 
