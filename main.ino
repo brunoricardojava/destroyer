@@ -36,7 +36,7 @@
 
 //Pinos dos sensores de IR
 #define pin_ir1 6
-#define pin_IR2 7
+#define pin_ir2 7
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,12 +76,16 @@ Thread DEBUG_SERIAL;
 //---------------------------------------------------------------------------------------------//
 
 //Distância do sensor ultra sônico
-float distancia_sonora; 
+float distancia_sonora = 0; 
 
 //Armazena o estado dos sensores de linha "true" para linha detectada e "false" para linha não detectada
 bool state_line_sensor1 = false;
 bool state_line_sensor2 = false;
 bool state_line_sensor3 = false;
+
+//Armazena o estado dos sensores de IR "true" para obstáculo detectado e "false" para obstáculo não detectado
+bool state_ir_sensor1 = false;
+bool state_ir_sensor2 = false;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -107,6 +111,9 @@ void LeituraSensorDeLinha(){
 
 //Função para fazer leitura dos sensores IR
 void LeituraSensorIR(){
+
+	state_ir_sensor1 = digitalRead(pin_ir1);
+	state_ir_sensor2 = digitalRead(pin_ir2);
 
 }
 
@@ -141,6 +148,7 @@ void DebugSerial(){
   Serial.print("\n");
 
 }
+
 //------------------------------------------------------------------------//
 //-----------Funções que são chamadas dentro da função setup--------------//
 //------------------------------------------------------------------------//
@@ -154,6 +162,10 @@ void SetPin(){
 
   //Pino echo do sensor ultra sônico
   pinMode(echo, INPUT);
+
+  //Pino dos sensores IR
+  pinMode(pin_ir1, INPUT);
+  pinMode(pin_ir2, INPUT);
 
 }
 
@@ -202,7 +214,6 @@ void ConfigThreads(){
 	//----------------------------------------------------------//
 
 }
-
 ///////////////////////////////////////////////////////////////////////////
 
 
