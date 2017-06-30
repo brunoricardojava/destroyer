@@ -5,7 +5,7 @@
 // Threads: Todas maiúsculas com underline separando as palavras
 // Definições: Todas minúsculas com underline separando as palavras
 // Funções: Cada palavra começa com maiúscula 
-// Variáveis: 
+// Variáveis: Mesma forma que as definições, minúscula com underline separando as palavras
 
 
 #include "Thread.h" //Biblioteca de threads
@@ -19,10 +19,10 @@
 #define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho
 #define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial
-//--------------------------------------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------------------------//
-//------------Definição dos pinos usados no projeto--------------------------------//
+//------------Definição dos pinos usados no projeto-------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 
 //Pinos do sensor sonoro
@@ -34,16 +34,29 @@
 #define pin_line_sensor2 A1
 #define pin_line_sensor3 A2
 
-//--------------------------------------------------------------------------------------------//
+//Pinos dos sensores de IR
+#define pin_ir1 6
+#define pin_IR2 7
 
-//Valor limiar de detecção da linha
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Valor limiar de detecção da linha-> Este valor significa uma especie de vizinhança do valor lido pela
+// entrada analogica dos sensores de linha, dependendo da cor da linha esse limiar será alterado...
+// Vamos criar uma tabela aqui na documentação contendo os limiares de várias cores padrão:
+// preto, branco, cinza, azul, amarelo... Caso precisemos mudar para outra cor de detecção já vamos ter o limiar.
+// OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita 
+// e armazenar em uma variável
 #define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
 
-#define velocidade_serial 19200 //Velocidade da serial
+//Define a velocidade da serial
+#define velocidade_serial 115200 //9600// 
 
 //Ativar ou desativar o modo de debug
 #define modo_debug_serial 1 //"1" para ativar e "0" para desativar o modo de debug
 
+//--------------------------------------------------------------------------------------------//
+//-----------Instancias da biblioteca "Threads"-----------------------------------------------//
+//--------------------------------------------------------------------------------------------//
 //Instanciando um controlador de threads
 ThreadController ROBO; 
 
@@ -55,20 +68,22 @@ Thread LEITURA_SENSOR_SONORO;
 Thread CONTROLLER_ROBO;
 Thread DEBUG_SERIAL;
 //----------------------------------------------------//
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//----------------------------------------------------//
-//-------Definindo as Variáveis-----------------------//
-//----------------------------------------------------//
+//----------------------------------------------------------------------------------------------//
+//-------Definindo as Variáveis-----------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------//
 
-float distancia_sonora; //Distância do sensor ultra sônico
+//Distância do sensor ultra sônico
+float distancia_sonora; 
 
 //Armazena o estado dos sensores de linha "true" para linha detectada e "false" para linha não detectada
 bool state_line_sensor1 = false;
 bool state_line_sensor2 = false;
 bool state_line_sensor3 = false;
 
-//----------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -126,7 +141,9 @@ void DebugSerial(){
   Serial.print("\n");
 
 }
-
+//------------------------------------------------------------------------//
+//-----------Funções que são chamadas dentro da função setup--------------//
+//------------------------------------------------------------------------//
 //Função que irá setar a configuração dos pinos do arduino
 void SetPin(){
 
@@ -151,39 +168,60 @@ void BeginSerial(){
 
 }
 
+void ConfigThreads(){
+//----------------------------------------------------------//
+	//-----------Setando as configurações das threads-----------//
+	//----------------------------------------------------------//
+
+	//Sensor de linha
+	LEITURA_SENSOR_DE_LINHA.setInterval(tempo_sensor_linha);
+	LEITURA_SENSOR_DE_LINHA.onRun(LeituraSensorDeLinha);
+
+	//Sensor de IR
+	LEITURA_SENSOR_IR.setInterval(tempo_sensor_ir);
+	LEITURA_SENSOR_IR.onRun(LeituraSensorIR);
+	
+	//Sensor sonoro
+	LEITURA_SENSOR_SONORO.setInterval(tempo_sensor_sonoro);
+	LEITURA_SENSOR_SONORO.onRun(LeituraSensorSonoro);
+
+	//Controle do robô
+	CONTROLLER_ROBO.setInterval(tempo_operacao_robo);
+	CONTROLLER_ROBO.onRun(ControleDosMotores);
+
+	//Debug da serial
+	DEBUG_SERIAL.setInterval(tempo_debug_serial);
+	DEBUG_SERIAL.onRun(DebugSerial);
+
+	//Adicionando as threads no seu controlador
+	ROBO.add(&LEITURA_SENSOR_DE_LINHA);
+	ROBO.add(&LEITURA_SENSOR_IR);
+	ROBO.add(&LEITURA_SENSOR_SONORO);
+	ROBO.add(&CONTROLLER_ROBO);
+	ROBO.add(&DEBUG_SERIAL);
+	//----------------------------------------------------------//
+
+}
+
+///////////////////////////////////////////////////////////////////////////
+
 
 void setup(){
 
-  //Chamada de função para configuração dos pinos
-  SetPin();
+	//Chamada da função que configura as threads
+	ConfigThreads();
 
-  //Chamada da função que inicia a serial
-  BeginSerial();
+	//Chamada de função para configuração dos pinos
+	SetPin();
 
-  //----------------------------------------------------------//
-  //-----------Setando as configurações das threads-----------//
-  //----------------------------------------------------------//
-  LEITURA_SENSOR_DE_LINHA.setInterval(tempo_sensor_linha);
-  LEITURA_SENSOR_DE_LINHA.onRun(LeituraSensorDeLinha);
-
-  LEITURA_SENSOR_IR.setInterval(tempo_sensor_ir);
-  LEITURA_SENSOR_IR.onRun(LeituraSensorIR);
-  
-  LEITURA_SENSOR_SONORO.setInterval(tempo_sensor_sonoro);
-  LEITURA_SENSOR_SONORO.onRun(LeituraSensorSonoro);
-
-  CONTROLLER_ROBO.setInterval(tempo_operacao_robo);
-  CONTROLLER_ROBO.onRun(ControleDosMotores);
-
-  DEBUG_SERIAL.setInterval(tempo_debug_serial);
-  DEBUG_SERIAL.onRun(DebugSerial);
-
-  ROBO.add(&LEITURA_SENSOR_DE_LINHA);
-  ROBO.add(&LEITURA_SENSOR_IR);
-  ROBO.add(&LEITURA_SENSOR_SONORO);
-  ROBO.add(&CONTROLLER_ROBO);
-  ROBO.add(&DEBUG_SERIAL);
-  //----------------------------------------------------------//
+	//Habilita ou não a thread de debug
+	if(modo_debug_serial){
+		DEBUG_SERIAL.enabled = true;
+		
+		//Chamada da função que inicia a serial
+		BeginSerial();
+	}	
+	else DEBUG_SERIAL.enabled = false;  
 
 }
 
@@ -191,9 +229,5 @@ void loop(){
 	
 	//Chama o thread controller
 	ROBO.run();
-  	
-  	//Habilita ou não a thread de debug
-  	if(modo_debug_serial)	DEBUG_SERIAL.enabled = true;
-  	else DEBUG_SERIAL.enabled = false;
 
 }
