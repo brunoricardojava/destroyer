@@ -40,9 +40,9 @@
 #define pin_ir2 7
 
 //Pinos dos motores
-#define pin1_motor 8
-#define pin2_motor 9
-#define pin3_motor 10
+#define pin1_motor 38
+#define pin2_motor 34
+#define pin3_motor 22
 //#define pin4_motor 11 //Caso usemos 4 pinos de controle
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,43 +187,43 @@ void LogicaDoRobo(){
 void ControleDosMotores(){
 	switch(config_motor){
 		case 'P':
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, LOW);
+			digitalWrite(pin2_motor, HIGH);
+			digitalWrite(pin3_motor, LOW);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 
 		case 'F':
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, LOW);
+			digitalWrite(pin2_motor, LOW);
+			digitalWrite(pin3_motor, LOW);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 
 		case 'D':
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, LOW);
+			digitalWrite(pin2_motor, LOW);
+			digitalWrite(pin3_motor, HIGH);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 
 		case 'E':
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, HIGH);
+			digitalWrite(pin2_motor, LOW);
+			digitalWrite(pin3_motor, LOW);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 
 		case 'R':
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, HIGH);
+			digitalWrite(pin2_motor, HIGH);
+			digitalWrite(pin3_motor, HIGH);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 		default:
-			digitalWrite(pin1_motor, );
-			digitalWrite(pin2_motor, );
-			digitalWrite(pin3_motor, );
+			digitalWrite(pin1_motor, LOW);
+			digitalWrite(pin2_motor, HIGH);
+			digitalWrite(pin3_motor, LOW);
 			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
 			break;
 	}
@@ -269,16 +269,13 @@ void SetPin(){
 //Função para iniciar a comunicação serial
 void BeginSerial(){
 
-	//Condição para iniciar a serial
-	if(modo_debug_serial){
     	Serial.begin(velocidade_serial);
     	Serial.print("Modo debug_serial iniciado\n");
-	}
 
 }
 
 void ConfigThreads(){
-//----------------------------------------------------------//
+	//----------------------------------------------------------//
 	//-----------Setando as configurações das threads-----------//
 	//----------------------------------------------------------//
 
