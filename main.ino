@@ -1,10 +1,10 @@
 // Código do robô sumô
-// Usamos uma biblioteca de RTOS para gerenciamento de tasks, 
+// Usamos uma biblioteca de RTOS para gerenciamento de tasks,
 // em especifico é um gerencimento de tarefas ciclicas definido por intervalos de tempo.
 // Padronização:
 // Threads: Todas maiúsculas com underline separando as palavras
 // Definições: Todas minúsculas com underline separando as palavras
-// Funções: Cada palavra começa com maiúscula 
+// Funções: Cada palavra começa com maiúscula
 // Variáveis: Mesma forma que as definições, minúscula com underline separando as palavras
 
 
@@ -15,35 +15,42 @@
 //------------Definição dos tempos de chamada para cada thread--------------------------------//
 //--------------------------------------------------------------------------------------------//
 #define tempo_logica_robo    50   //Tempo de ciclos de operação do robô.
-#define tempo_motor			 100  //Tempo de controle dos motores.
+#define tempo_motor			     100  //Tempo de controle dos motores.
 #define tempo_sensor_linha   200  //Tempo de leitura dos sensores de linha em mili segundos.
 #define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho.
 #define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros.
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial.
+#define tempo_batery_status  1000 //Tempo de leitura da tensão da bateria
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos pinos usados no projeto-------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 
+//Pino do botão para mudança de stado em software
+#define pin_bouton_state 3
+
 //Pinos dos sensores de linha
-#define pin_line_sensor1 0
-#define pin_line_sensor2 1
-#define pin_line_sensor3 2
+#define pin_line_sensor1 A0
+#define pin_line_sensor2 A1
+#define pin_line_sensor3 A2
+
+//Pino para leitura da tensão da bateria
+#define pin_batery_status A5
 
 //Pinos do sensor sonoro
-#define echo 5 //Pino do sensor ultra sônico correspndente ao echo
-#define trig 4 //Pino do sensor ultra sônico correspndente ao Trig
+#define echo 8 //Pino do sensor ultra sônico correspndente ao echo
+#define trig 9 //Pino do sensor ultra sônico correspndente ao Trig
 
 //Pinos dos sensores de IR
-#define pin_ir1 6
-#define pin_ir2 7
+#define pin_ir1 10
+#define pin_ir2 11
 
 //Pinos dos motores
-#define pin1_motor 38
-#define pin2_motor 34
-#define pin3_motor 22
-//#define pin4_motor 11 //Caso usemos 4 pinos de controle
+#define pin1_motor 4
+#define pin2_motor 5
+#define pin3_motor 6
+#define pin4_motor 7
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,12 +58,12 @@
 // entrada analogica dos sensores de linha, dependendo da cor da linha esse limiar será alterado...
 // Vamos criar uma tabela aqui na documentação contendo os limiares de várias cores padrão:
 // preto, branco, cinza, azul, amarelo... Caso precisemos mudar para outra cor de detecção já vamos ter o limiar.
-// OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita 
+// OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita
 // e armazenar em uma variável
 #define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
 
 //Define a velocidade da serial
-#define velocidade_serial 115200 //9600 
+#define velocidade_serial 115200 //9600
 
 //Ativar ou desativar o modo de debug
 #define modo_debug_serial 1 //"1" para ativar e "0" para desativar o modo de debug
@@ -65,7 +72,7 @@
 //-----------Instancias da biblioteca "Threads"-----------------------------------------------//
 //--------------------------------------------------------------------------------------------//
 //Instanciando um controlador de threads
-ThreadController ROBO; 
+ThreadController ROBO;
 
 //Definindo as threads a serem usadas
 //----------------------------------------------------//
