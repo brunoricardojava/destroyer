@@ -269,6 +269,9 @@ void SetPin(){
   digitalWrite(trig, LOW); //Deixar trigger em nível lógico baixo
   delayMicroseconds(2); //Não sei se é necessario essa função
 
+	//Pino do botão de mudança de stado do robô
+	pinMode(pin_bouton_state, INPUT);
+
   //Pino echo do sensor ultra sônico
   pinMode(echo, INPUT);
 
@@ -278,9 +281,16 @@ void SetPin(){
 
   //Pino que controlam os motores
   pinMode(pin1_motor, OUTPUT);
+	digitalWrite(pin1_motor, HIGH);
+
   pinMode(pin2_motor, OUTPUT);
+	digitalWrite(pin2_motor, LOW);
+
   pinMode(pin3_motor, OUTPUT);
-  //pinMode(pin4_motor, OUTPUT); //Caso usemos 4 pinos de controle
+	digitalWrite(pin3_motor, HIGH);
+
+	pinMode(pin4_motor, OUTPUT);
+	digitalWrite(pin4_motor, LOW);
 
 
 }
