@@ -82,6 +82,7 @@ Thread LEITURA_SENSOR_SONORO;
 Thread LOGICA_ROBO;
 Thread CONTROLE_MOTOR;
 Thread DEBUG_SERIAL;
+Thread BATERY_STATUS;
 //----------------------------------------------------//
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,7 +110,10 @@ char state = 'P';
 char config_motor = 'P';
 
 //Distância do sensor ultra sônico
-float distancia_sonora = 0; 
+float distancia_sonora = 0;
+
+//Tensão da bateria
+float tensao_bateria = 0;
 
 //Armazena o estado dos sensores de linha "true" para linha detectada e "false" para linha não detectada
 bool state_line_sensor1 = false;
@@ -166,6 +170,11 @@ void LeituraSensorSonoro(){
   //Calculando a distância
   distancia_sonora = tempo / 29.4 / 2;
 
+}
+
+//Função para fazer leitura da tensão da bateria
+void LeituraBateryStatus(){
+  tensao_bateria = (analogRead(pin_batery_status) * 4.98 / 1023.0) * 3;
 }
 
 
