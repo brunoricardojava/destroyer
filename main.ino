@@ -250,9 +250,11 @@ void ControleDosMotores(){
 //Função para ajudar a debugar o código
 void DebugSerial(){
   //Print das variáveis
-  Serial.print("Distancia do sensor sonoro: ");
+  /*Serial.print("Distancia do sensor sonoro: ");
   Serial.print(distancia_sonora);
-  Serial.print("\n");
+  Serial.print("\n");*/
+  Serial.print("Status da bateria: ");
+  Serial.println(tensao_bateria);
 
 }
 
@@ -303,7 +305,7 @@ void ConfigThreads(){
 	//Sensor de IR
 	LEITURA_SENSOR_IR.setInterval(tempo_sensor_ir);
 	LEITURA_SENSOR_IR.onRun(LeituraSensorIR);
-	
+
 	//Sensor sonoro
 	LEITURA_SENSOR_SONORO.setInterval(tempo_sensor_sonoro);
 	LEITURA_SENSOR_SONORO.onRun(LeituraSensorSonoro);
@@ -319,6 +321,10 @@ void ConfigThreads(){
 	DEBUG_SERIAL.setInterval(tempo_debug_serial);
 	DEBUG_SERIAL.onRun(DebugSerial);
 
+  //Status da bateria
+  BATERY_STATUS.setInterval(tempo_batery_status);
+  BATERY_STATUS.onRun(LeituraBateryStatus);
+
 	//Adicionando as threads no seu controlador
 	ROBO.add(&LEITURA_SENSOR_DE_LINHA);
 	ROBO.add(&LEITURA_SENSOR_IR);
@@ -326,6 +332,7 @@ void ConfigThreads(){
 	ROBO.add(&LOGICA_ROBO);
 	ROBO.add(&CONTROLE_MOTOR);
 	ROBO.add(&DEBUG_SERIAL);
+  ROBO.add(&BATERY_STATUS);
 	//----------------------------------------------------------//
 
 }
@@ -343,16 +350,16 @@ void setup(){
 	//Habilita ou não a thread de debug
 	if(modo_debug_serial){
 		DEBUG_SERIAL.enabled = true;
-		
+
 		//Chamada da função que inicia a serial
 		BeginSerial();
-	}	
-	else DEBUG_SERIAL.enabled = false;  
+	}
+	else DEBUG_SERIAL.enabled = false;
 
 }
 
 void loop(){
-	
+
 	//Chama o thread controller
 	ROBO.run();
 
