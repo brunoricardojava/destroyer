@@ -206,41 +206,42 @@ void ControleDosMotores(){
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, HIGH);
 			break;
 
 		case 'F':
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, LOW);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, LOW);
 			break;
 
 		case 'D':
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, HIGH);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, HIGH);
 			break;
 
 		case 'E':
 			digitalWrite(pin1_motor, HIGH);
-			digitalWrite(pin2_motor, LOW);
+			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, LOW);
 			break;
 
 		case 'R':
 			digitalWrite(pin1_motor, HIGH);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, HIGH);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, HIGH);
 			break;
+
 		default:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
-			//digitalWrite(pin4_motor, ); //Caso usaemos 4 pinos de controle
+			digitalWrite(pin4_motor, HIGH);
 			break;
 	}
 
