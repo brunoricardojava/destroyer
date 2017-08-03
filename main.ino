@@ -60,7 +60,7 @@
 // preto, branco, cinza, azul, amarelo... Caso precisemos mudar para outra cor de detecção já vamos ter o limiar.
 // OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita
 // e armazenar em uma variável
-#define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
+#define threshold_line_sensors 200 //Não sei o valor em especifico, tem que colocar o valor correto.
 
 //Define a velocidade da serial
 #define velocidade_serial 115200 //9600
@@ -133,16 +133,16 @@ void LeituraSensorDeLinha(){
 	int sensor1, sensor2, sensor3;
 	sensor1 = analogRead(pin_line_sensor1);
 	sensor2 = analogRead(pin_line_sensor2);
-	sensor3 = analogRead(pin_line_sensor1);
+	sensor3 = analogRead(pin_line_sensor3);
 
-	if(sensor1>= threshold_line_sensors && sensor1 < threshold_line_sensors + 100) state_line_sensor1 = true;
+	if(sensor1 < threshold_line_sensors) state_line_sensor1 = true;
 	else state_line_sensor1 = false;
 
-	if(sensor2>= threshold_line_sensors && sensor2 < threshold_line_sensors + 100) state_line_sensor2 = true;
+	if(sensor2 < threshold_line_sensors) state_line_sensor2 = true;
 	else state_line_sensor2 = false;
 
-	if(sensor3>= threshold_line_sensors && sensor2 < threshold_line_sensors + 100) state_line_sensor2 = true;
-	else state_line_sensor2 = false;
+	if(sensor3 < threshold_line_sensors) state_line_sensor3 = true;
+	else state_line_sensor3 = false;
 
 }
 
@@ -255,6 +255,16 @@ void DebugSerial(){
   Serial.print("\n");*/
   Serial.print("Status da bateria: ");
   Serial.println(tensao_bateria);
+	Serial.print("\n");
+	Serial.print("Sensor de linha 1: ");
+	Serial.print(state_line_sensor1);
+	Serial.print("\n");
+	Serial.print("Sensor de linha 2: ");
+	Serial.print(state_line_sensor2);
+	Serial.print("\n");
+	Serial.print("Sensor de linha 3: ");
+	Serial.print(state_line_sensor3);
+	Serial.print("\n");
 
 }
 
