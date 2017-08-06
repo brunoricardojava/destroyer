@@ -10,14 +10,15 @@
 
 #include "Thread.h" //Biblioteca de threads
 #include "ThreadController.h" //Biblioteca para controle das threads
+//#include "utilities.h" //Arquivo com funções
 
 //--------------------------------------------------------------------------------------------//
 //------------Definição dos tempos de chamada para cada thread--------------------------------//
 //--------------------------------------------------------------------------------------------//
 #define tempo_logica_robo    50   //Tempo de ciclos de operação do robô.
 #define tempo_motor			     100  //Tempo de controle dos motores.
-#define tempo_sensor_linha   200  //Tempo de leitura dos sensores de linha em mili segundos.
-#define tempo_sensor_ir      200  //Tempo de leitura dos sensores de infra-vermelho.
+#define tempo_sensor_linha   300  //Tempo de leitura dos sensores de linha em mili segundos.
+#define tempo_sensor_ir      300  //Tempo de leitura dos sensores de infra-vermelho.
 #define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros.
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial.
 #define tempo_batery_status  1000 //Tempo de leitura da tensão da bateria
