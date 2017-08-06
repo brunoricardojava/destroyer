@@ -98,6 +98,7 @@ Thread BATERY_STATUS;
 // Parado-'P': Robô parado;
 // Busca--'B': Robô entra em modo de busca;
 // Alvo---'A': Robô encontrou seu alvo
+// Borda---'S': Robô está na borda
 // Outros estado podem ser configurados aqui...
 char state = 'P';
 
@@ -122,7 +123,7 @@ bool state_line_sensor2 = false;
 bool state_line_sensor3 = false;
 
 //Armazena o estado dos sensores de IR "true" para obstáculo detectado e "false" para obstáculo não detectado
-bool state_ir_sensor1 = false;
+bool state_ir_sensor1 = false; //1-para não detectado 0- para detectado
 bool state_ir_sensor2 = false;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,13 +186,56 @@ void LogicaDoRobo(){
 	switch(state){
 		case 'P':
 			config_motor = 'P';
+			delay(3000);
+			state = 'B';
 			break;
 		case 'B':
-			//Lógica de busca do robô
+
+				if(distancia_sonora < 30 or !state_ir_sensor1 or !state_ir_sensor2){
+					state = 'A';
+					config_motor = 'F';
+					break;
+				}
+				else{
+					config_motor = 'D';
+				}
 			break;
 		case 'A':
 			//Lógica de ataque do robô
+			//if(state_line_sensor1 = 1 or state_line_sensor2 = 1) state = 'S';
+			//else if (state_line_sensor3 = 1) state = 'S';
+
+			if(distancia_sonora > 35 and state_ir_sensor1 and state_ir_sensor2){
+				state = 'B';
+				break;
+			}
+
+			if(distancia_sonora < 30 and !state_ir_sensor1 and !state_ir_sensor2){
+				config_motor = 'F';
+			}
+			else{
+				if(distancia_sonora < 30 and (!state_ir_sensor1 or !state_ir_sensor2)){
+					if(!state_ir_sensor1){
+						config_motor = 'E';
+
+					}
+					else{
+						config_motor = 'D';
+					}
+				}
+				else{
+					config_motor = 'F';
+				}
+			}
 			break;
+		case 'S':
+			//Lógica de encontro com borda
+			config_motor = 'R';
+			if((state_line_sensor1 = 0) and (state_line_sensor2 = 0) and (state_line_sensor3 = 0)){
+				state = 'B';
+			}
+			break;
+
 		//Novos estados do robô podem ser inseridos aqui...
 		default:
 			config_motor = 'P';
