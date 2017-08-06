@@ -100,9 +100,7 @@ Thread BATERY_STATUS;
 // Alvo---'A': Robô encontrou seu alvo
 // Borda---'S': Robô está na borda
 // Outros estado podem ser configurados aqui...
-enum states {P, B, A};
-typedef enum states roboStates;
-roboStates state = P;
+char state = 'P';
 
 // Variável "config_motor" define a configuração dos motores
 // As configurações possiveis do motor são:
@@ -111,9 +109,7 @@ roboStates state = P;
 // Direita--'D': Robô vira pra direita;
 // Esquerda-'E': Robô vira pra esquerda;
 // Ré-------'R': Robô vai pra trás;
-enum statesMotor{P, F, D, E, R};
-typedef enum statesMotor motorStates;
-motorStates config_motor = P;
+char config_motor = 'P';
 
 //Distância do sensor ultra sônico
 float distancia_sonora = 0;
