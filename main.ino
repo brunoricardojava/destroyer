@@ -310,6 +310,16 @@ void DebugSerial(){
 	Serial.print("Sensor de linha 3: ");
 	Serial.print(state_line_sensor3);
 	Serial.print("\n");
+	Serial.print("Sensor IR1: ");
+	Serial.print(state_ir_sensor1);
+	Serial.print("\n");
+	Serial.print("Sensor IR2: ");
+	Serial.print(state_ir_sensor2);
+	Serial.print("\n");
+	Serial.print("Sensor sonoro: ");
+	Serial.print(distancia_sonora);
+	Serial.print("\n");
+
 
 }
 
