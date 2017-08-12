@@ -29,7 +29,7 @@
 //--------------------------------------------------------------------------------------------//
 
 //Pino do botão para mudança de stado em software
-#define pin_bouton_state 3
+#define pin_bouton_state 10
 
 //Pinos dos sensores de linha
 #define pin_line_sensor1 A0
@@ -40,18 +40,18 @@
 #define pin_batery_status A5
 
 //Pinos do sensor sonoro
-#define echo 8 //Pino do sensor ultra sônico correspndente ao echo
-#define trig 9 //Pino do sensor ultra sônico correspndente ao Trig
+#define trig 6 //Pino do sensor ultra sônico correspndente ao Trig
+#define echo 7 //Pino do sensor ultra sônico correspndente ao echo
 
 //Pinos dos sensores de IR
-#define pin_ir1 10
-#define pin_ir2 11
+#define pin_ir1 4
+#define pin_ir2 5
 
 //Pinos dos motores
-#define pin1_motor 4
-#define pin2_motor 5
-#define pin3_motor 6
-#define pin4_motor 7
+#define pin1_motor 2
+#define pin2_motor 3
+#define pin3_motor 11
+#define pin4_motor 12
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
