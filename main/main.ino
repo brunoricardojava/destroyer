@@ -17,7 +17,7 @@
 //--------------------------------------------------------------------------------------------//
 #define tempo_logica_robo    50   //Tempo de ciclos de operação do robô.
 #define tempo_motor			     100  //Tempo de controle dos motores.
-#define tempo_sensor_linha   300  //Tempo de leitura dos sensores de linha em mili segundos.
+#define tempo_sensor_linha   100  //Tempo de leitura dos sensores de linha em mili segundos.
 #define tempo_sensor_ir      300  //Tempo de leitura dos sensores de infra-vermelho.
 #define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros.
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial.
@@ -61,7 +61,7 @@
 // preto, branco, cinza, azul, amarelo... Caso precisemos mudar para outra cor de detecção já vamos ter o limiar.
 // OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita
 // e armazenar em uma variável
-#define threshold_line_sensors 200 //Não sei o valor em especifico, tem que colocar o valor correto.
+#define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
 
 //Define a velocidade da serial
 #define velocidade_serial 115200 //9600
@@ -186,18 +186,23 @@ void LogicaDoRobo(){
 	switch(state){
 		case 'P':
 			config_motor = 'P';
-			delay(3000);
+			//delay(3000);
+			delay(6000);
 			state = 'B';
 			break;
 		case 'B':
 
-				if(distancia_sonora < 30 or !state_ir_sensor1 or !state_ir_sensor2){
+				if(state_line_sensor2){
+          config_motor = 'R';
+          break;
+				}
+				if(distancia_sonora < 180 or !state_ir_sensor2){
 					state = 'A';
 					config_motor = 'F';
 					break;
 				}
 				else{
-					config_motor = 'D';
+					  config_motor = 'D';
 				}
 			break;
 		case 'A':
@@ -205,16 +210,28 @@ void LogicaDoRobo(){
 			//if(state_line_sensor1 = 1 or state_line_sensor2 = 1) state = 'S';
 			//else if (state_line_sensor3 = 1) state = 'S';
 
-			if(distancia_sonora > 35 and state_ir_sensor1 and state_ir_sensor2){
+     if(state_line_sensor2){
+          state = 'S';
+          break;
+       }
+
+			if(distancia_sonora > 180 and state_ir_sensor2){
 				state = 'B';
 				break;
 			}
 
-			if(distancia_sonora < 30 and !state_ir_sensor1 and !state_ir_sensor2){
+			if(distancia_sonora < 180 and !state_ir_sensor2){
 				config_motor = 'F';
+        //config jamelly
+        //LeituraSensorDeLinha();
+        //if(state_line_sensor2 or state_line_sensor3){
+        //  state = 'S';
+        //}
+        break;
+        
 			}
 			else{
-				if(distancia_sonora < 30 and (!state_ir_sensor1 or !state_ir_sensor2)){
+				if(distancia_sonora < 180 and (!state_ir_sensor1 or !state_ir_sensor2)){
 					if(!state_ir_sensor1){
 						config_motor = 'E';
 
@@ -231,31 +248,24 @@ void LogicaDoRobo(){
 		case 'S':
 			//Lógica de encontro com borda
 			//Considerando Sensor 1 (frente esquerda do robô), 2(frente direita) e 3 (de trás)
-			config_motor = 'R';
+			
 			//Nenhum sensor de linha ativado
-			if(state_line_sensor1 == 0 and state_line_sensor2 == 0 and state_line_sensor3 == 0){
+			if(state_line_sensor2 == 0 and state_line_sensor3 == 0){
 				state = 'B';
 			}
 			//frente do robô achou sensor de linha
-			else if (state_line_sensor1 == 1 and state_line_sensor2 == 1 and state_line_sensor3 == 0 ){
-				config_motor = 'R';	
+			else if (state_line_sensor2 == 1){
+				config_motor = 'R';
+      ControleDosMotores();
+      delay(1000);
+      config_motor = 'D';
+      ControleDosMotores();
+      delay(500);
 			}
-			//robô sendo empurrado pela lateral direita
-			else if (state_line_sensor1 == 1 and state_line_sensor2 == 0 and state_line_sensor3 == 1){
-				config_motor = 'D';
-			}
-			//robô sendo empurrado pela lateral esquerda
-			else if (state_line_sensor1 == 0 and state_line_sensor2 == 1 and state_line_sensor3 == 1){
-        config_motor = 'E';
-      }
-			else if (state_line_sensor1){
-				config_motor = 'D';	
-			}
-			else if (state_line_sensor2){
-				config_motor = 'E';	
-			}
-			else{
-				config_motor = 'F';	
+			else if (state_line_sensor3){
+        config_motor = 'F';
+      ControleDosMotores();
+      delay(200);
 			}
 			break;
 
