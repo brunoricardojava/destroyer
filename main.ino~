@@ -230,13 +230,37 @@ void LogicaDoRobo(){
 			break;
 		case 'S':
 			//Lógica de encontro com borda
+			//Considerando Sensor 1 (frente esquerda do robô), 2(frente direita) e 3 (de trás)
 			config_motor = 'R';
-			if((state_line_sensor1 = 0) and (state_line_sensor2 = 0) and (state_line_sensor3 = 0)){
+			//Nenhum sensor de linha ativado
+			if(state_line_sensor1 == 0 and state_line_sensor2 == 0 and state_line_sensor3 == 0){
 				state = 'B';
+			}
+			//frente do robô achou sensor de linha
+			else if (state_line_sensor1 == 1 and state_line_sensor2 == 1 and state_line_sensor3 == 0 ){
+				config_motor = 'R';	
+			}
+			//robô sendo empurrado pela lateral direita
+			else if (state_line_sensor1 == 1 and state_line_sensor2 == 0 and state_line_sensor == 1){
+				config_motor = 'D';
+			}
+			//robô sendo empurrado pela lateral esquerda
+			else if (state_line_sensor1 == 0 and state_line_sensor2 == 1 and state_line_sensor == 1){
+        config_motor = 'E';
+      }
+			else if (state_line_sensor1){
+				config_motor = 'D';	
+			}
+			else if (state_line_sensor2){
+				config_motor = 'E';	
+			}
+			else{
+				config_motor = 'F';	
 			}
 			break;
 
 		//Novos estados do robô podem ser inseridos aqui...
+
 		default:
 			config_motor = 'P';
 			break;

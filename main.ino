@@ -241,11 +241,11 @@ void LogicaDoRobo(){
 				config_motor = 'R';	
 			}
 			//robô sendo empurrado pela lateral direita
-			else if (state_line_sensor1 == 1 and state_line_sensor2 == 0 and state_line_sensor == 1){
+			else if (state_line_sensor1 == 1 and state_line_sensor2 == 0 and state_line_sensor3 == 1){
 				config_motor = 'D';
 			}
 			//robô sendo empurrado pela lateral esquerda
-			else if (state_line_sensor1 == 0 and state_line_sensor2 == 1 and state_line_sensor == 1){
+			else if (state_line_sensor1 == 0 and state_line_sensor2 == 1 and state_line_sensor3 == 1){
         config_motor = 'E';
       }
 			else if (state_line_sensor1){
