@@ -189,7 +189,6 @@ void LogicaDoRobo(){
 			config_motor = 'P';
       //Serial.println(digitalRead(pin_bouton_state));
      if(!digitalRead(pin_bouton_state)) {
-			  //delay(3000);
 			  delay(5000);
         state = 'B';
      }
@@ -200,7 +199,7 @@ void LogicaDoRobo(){
           config_motor = 'R';
           break;
 				}
-				if(distancia_sonora < 180 or !state_ir_sensor2){
+				if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
 					state = 'A';
 					config_motor = 'F';
 					break;
@@ -210,6 +209,7 @@ void LogicaDoRobo(){
 				}
 			break;
 		case 'A':
+			#if 0
 			//Lógica de ataque do robô
 			//if(state_line_sensor1 = 1 or state_line_sensor2 = 1) state = 'S';
 			//else if (state_line_sensor3 = 1) state = 'S';
@@ -248,6 +248,25 @@ void LogicaDoRobo(){
 					config_motor = 'F';
 				}
 			}
+     #endif
+    if(distancia_sonora > threshould_ultra  and state_ir_sensor1 and state_ir_sensor2){
+        state = 'B';
+        break;
+      }
+      //Não sei exatamente qual a referência desses numeros do ultrasônico,  mas acho que nesse if (depois dessa linha) deveria ser "<35"
+    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1 and !state_ir_sensor2){
+        config_motor = 'F';
+      }
+    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1){
+        config_motor = 'E';
+      }
+    else if (distancia_sonora < threshould_ultra  and !state_ir_sensor2){
+        config_motor = 'D';
+      }
+      else { 
+        state = 'B';
+      }
+
 			break;
 		case 'S':
 			//Lógica de encontro com borda
