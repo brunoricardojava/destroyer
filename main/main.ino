@@ -29,7 +29,7 @@
 //--------------------------------------------------------------------------------------------//
 
 //Pino do botão para mudança de stado em software
-#define pin_bouton_state 10
+#define pin_bouton_state 9
 
 //Pinos dos sensores de linha
 #define pin_line_sensor1 A0
@@ -186,9 +186,12 @@ void LogicaDoRobo(){
 	switch(state){
 		case 'P':
 			config_motor = 'P';
-			//delay(3000);
-			delay(6000);
-			state = 'B';
+      //Serial.println(digitalRead(pin_bouton_state));
+     if(!digitalRead(pin_bouton_state)) {
+			  //delay(3000);
+			  delay(5000);
+        state = 'B';
+     }
 			break;
 		case 'B':
 
@@ -369,7 +372,7 @@ void SetPin(){
   delayMicroseconds(2); //Não sei se é necessario essa função
 
 	//Pino do botão de mudança de stado do robô
-	pinMode(pin_bouton_state, INPUT);
+	pinMode(pin_bouton_state, INPUT_PULLUP);
 
   //Pino echo do sensor ultra sônico
   pinMode(echo, INPUT);
