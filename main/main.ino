@@ -62,6 +62,7 @@
 // OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita
 // e armazenar em uma variável
 #define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
+#define threshould_ultra 100
 
 //Define a velocidade da serial
 #define velocidade_serial 115200 //9600
@@ -218,13 +219,13 @@ void LogicaDoRobo(){
           break;
        }
 
-			if(distancia_sonora > 180 and state_ir_sensor2){
+			if(distancia_sonora > threshould_ultra and state_ir_sensor2){
 				state = 'B';
 				break;
 			}
 
-			if(distancia_sonora < 180 and !state_ir_sensor2){
-				config_motor = 'F';
+			if(distancia_sonora < threshould_ultra and !state_ir_sensor2){
+				config_motor = 'E';
         //config jamelly
         //LeituraSensorDeLinha();
         //if(state_line_sensor2 or state_line_sensor3){
@@ -234,7 +235,7 @@ void LogicaDoRobo(){
         
 			}
 			else{
-				if(distancia_sonora < 180 and (!state_ir_sensor1 or !state_ir_sensor2)){
+				if(distancia_sonora < threshould_ultra and (!state_ir_sensor1 or !state_ir_sensor2)){
 					if(!state_ir_sensor1){
 						config_motor = 'E';
 
