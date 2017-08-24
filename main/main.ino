@@ -189,17 +189,18 @@ void LogicaDoRobo(){
 	switch(state){
 		case P:
 			config_motor = MP;
-      //Serial.println(digitalRead(pin_bouton_state));
-     if(!digitalRead(pin_bouton_state)) {
-			  delay(5000);
-        state = B;
-     }
-			break;
+      			//Serial.println(digitalRead(pin_bouton_state));
+		     	if(!digitalRead(pin_bouton_state)) {
+					  delay(5000);
+		        state = B;
+		     	}
+		break;
+
 		case B:
 
 				if(state_line_sensor2){
-          config_motor = MR;
-          break;
+          				config_motor = MR;
+          				break;
 				}
 				if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
 					state = A;
@@ -210,70 +211,29 @@ void LogicaDoRobo(){
 					  config_motor = MD;
 				}
 
-			break;
+		break;
+
 		case A:
-			#if 0
-			//Lógica de ataque do robô
-			//if(state_line_sensor1 = 1 or state_line_sensor2 = 1) state = 'S';
-			//else if (state_line_sensor3 = 1) state = 'S';
+		    if(distancia_sonora > threshould_ultra  and state_ir_sensor1 and state_ir_sensor2){
+		        state = B;
+		        break;
+		      }
+		      //Não sei exatamente qual a referência desses numeros do ultrasônico,  mas acho que nesse if (depois dessa linha) deveria ser "<35"
+		    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1 and !state_ir_sensor2){
+		        config_motor = MF;
+		      }
+		    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1){
+		        config_motor = ME;
+		      }
+		    else if (distancia_sonora < threshould_ultra  and !state_ir_sensor2){
+		        config_motor = MD;
+		      }
+		    else {
+		        state = B;
+		      }
 
-     if(state_line_sensor2){
-          state = S;
-          break;
-       }
+		break;
 
-			if(distancia_sonora > threshould_ultra and state_ir_sensor2){
-				state = B;
-				break;
-			}
-
-			if(distancia_sonora < threshould_ultra and !state_ir_sensor2){
-				config_motor = ME;
-        //config jamelly
-        //LeituraSensorDeLinha();
-        //if(state_line_sensor2 or state_line_sensor3){
-        //  state = S;
-        //}
-        break;
-
-			}
-			else{
-				if(distancia_sonora < threshould_ultra and (!state_ir_sensor1 or !state_ir_sensor2)){
-					if(!state_ir_sensor1){
-						config_motor = ME;
-
-					}
-					else{
-						config_motor = MD;
-					}
-				}
-				else{
-					config_motor = MF;
-				}
-			}
-     #endif
-
-
-
-    if(distancia_sonora > threshould_ultra  and state_ir_sensor1 and state_ir_sensor2){
-        state = B;
-        break;
-      }
-      //Não sei exatamente qual a referência desses numeros do ultrasônico,  mas acho que nesse if (depois dessa linha) deveria ser "<35"
-    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1 and !state_ir_sensor2){
-        config_motor = MF;
-      }
-    else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1){
-        config_motor = ME;
-      }
-    else if (distancia_sonora < threshould_ultra  and !state_ir_sensor2){
-        config_motor = MD;
-      }
-      else {
-        state = B;
-      }
-
-			break;
 		case S:
 			//Lógica de encontro com borda
 			//Considerando Sensor 1 (frente esquerda do robô), 2(frente direita) e 3 (de trás)
@@ -284,18 +244,18 @@ void LogicaDoRobo(){
 			//frente do robô achou sensor de linha
 			else if (state_line_sensor2 == 1){
 				config_motor = MR;
-      ControleDosMotores();
-      delay(1000);
-      config_motor = MD;
-      ControleDosMotores();
-      delay(500);
+      				ControleDosMotores();
+      				delay(1000);
+			      	config_motor = MD;
+			      	ControleDosMotores();
+			      	delay(500);
 			}
 			else if (state_line_sensor3){
-        config_motor = MF;
-      ControleDosMotores();
-      delay(200);
+				config_motor = MF;
+				ControleDosMotores();
+				delay(200);
 			}
-			break;
+		break;
 
 		//Novos estados do robô podem ser inseridos aqui...
 
