@@ -101,7 +101,7 @@ Thread BATERY_STATUS;
 // Alvo---'A': Robô encontrou seu alvo
 // Borda---'S': Robô está na borda
 // Outros estado podem ser configurados aqui...
-enum state_robo {P = 1, B, A, S }state=P;
+enum state_robo {P = 0, B, A, S }state=P;
 
 // Variável "config_motor" define a configuração dos motores
 // As configurações possiveis do motor são:
@@ -110,7 +110,7 @@ enum state_robo {P = 1, B, A, S }state=P;
 // Direita--'D': Robô vira pra direita;
 // Esquerda-'E': Robô vira pra esquerda;
 // Ré-------'R': Robô vai pra trás;
-enum state_config_motor {P = 0, F, D, E, R }config_motor=P;
+enum state_config_motor {MP = 0, MF, MD, ME, MR }config_motor=MP;
 
 //Distância do sensor ultra sônico
 float distancia_sonora = 0;
@@ -187,7 +187,7 @@ void LeituraBateryStatus(){
 void LogicaDoRobo(){
 	switch(state){
 		case P:
-			config_motor = P;
+			config_motor = MP;
       //Serial.println(digitalRead(pin_bouton_state));
      if(!digitalRead(pin_bouton_state)) {
 			  delay(5000);
@@ -197,16 +197,16 @@ void LogicaDoRobo(){
 		case B:
 
 				if(state_line_sensor2){
-          config_motor = R;
+          config_motor = MR;
           break;
 				}
 				if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
 					state = A;
-					config_motor = F;
+					config_motor = MF;
 					break;
 				}
 				else{
-					  config_motor = D;
+					  config_motor = MD;
 				}
 			break;
 		case A:
@@ -226,7 +226,7 @@ void LogicaDoRobo(){
 			}
 
 			if(distancia_sonora < threshould_ultra and !state_ir_sensor2){
-				config_motor = E;
+				config_motor = ME;
         //config jamelly
         //LeituraSensorDeLinha();
         //if(state_line_sensor2 or state_line_sensor3){
@@ -238,15 +238,15 @@ void LogicaDoRobo(){
 			else{
 				if(distancia_sonora < threshould_ultra and (!state_ir_sensor1 or !state_ir_sensor2)){
 					if(!state_ir_sensor1){
-						config_motor = E;
+						config_motor = ME;
 
 					}
 					else{
-						config_motor = D;
+						config_motor = MD;
 					}
 				}
 				else{
-					config_motor = F;
+					config_motor = MF;
 				}
 			}
      #endif
@@ -259,13 +259,13 @@ void LogicaDoRobo(){
       }
       //Não sei exatamente qual a referência desses numeros do ultrasônico,  mas acho que nesse if (depois dessa linha) deveria ser "<35"
     else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1 and !state_ir_sensor2){
-        config_motor = F;
+        config_motor = MF;
       }
     else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1){
-        config_motor = E;
+        config_motor = ME;
       }
     else if (distancia_sonora < threshould_ultra  and !state_ir_sensor2){
-        config_motor = D;
+        config_motor = MD;
       }
       else { 
         state = B;
@@ -281,15 +281,15 @@ void LogicaDoRobo(){
 			}
 			//frente do robô achou sensor de linha
 			else if (state_line_sensor2 == 1){
-				config_motor = R;
+				config_motor = MR;
       ControleDosMotores();
       delay(1000);
-      config_motor = D;
+      config_motor = MD;
       ControleDosMotores();
       delay(500);
 			}
 			else if (state_line_sensor3){
-        config_motor = F;
+        config_motor = MF;
       ControleDosMotores();
       delay(200);
 			}
@@ -298,7 +298,7 @@ void LogicaDoRobo(){
 		//Novos estados do robô podem ser inseridos aqui...
 
 		default:
-			config_motor = P;
+			config_motor = MP;
 			break;
 	}
 
@@ -307,35 +307,35 @@ void LogicaDoRobo(){
 //Função para controle dos motores
 void ControleDosMotores(){
 	switch(config_motor){
-		case P:
+		case MP:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, HIGH);
 			break;
 
-		case F:
+		case MF:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, LOW);
 			break;
 
-		case D:
+		case MD:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, HIGH);
 			digitalWrite(pin4_motor, HIGH);
 			break;
 
-		case E:
+		case ME:
 			digitalWrite(pin1_motor, HIGH);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, LOW);
 			break;
 
-		case R:
+		case MR:
 			digitalWrite(pin1_motor, HIGH);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, HIGH);
