@@ -16,8 +16,8 @@
 //------------Definição dos tempos de chamada para cada thread--------------------------------//
 //--------------------------------------------------------------------------------------------//
 #define tempo_logica_robo    50   //Tempo de ciclos de operação do robô.
-#define tempo_motor			     100  //Tempo de controle dos motores.
-#define tempo_sensor_linha   100  //Tempo de leitura dos sensores de linha em mili segundos.
+#define tempo_motor			 100  //Tempo de controle dos motores.
+#define tempo_sensor_linha   150  //Tempo de leitura dos sensores de linha em mili segundos.
 #define tempo_sensor_ir      300  //Tempo de leitura dos sensores de infra-vermelho.
 #define tempo_sensor_sonoro  300  //Tempo de leitura dos sensores sonoros.
 #define tempo_debug_serial   1000 //Tempo de ciclos de debug da serial.
@@ -62,7 +62,8 @@
 // OBS: Seria interesante criarmos um modo de calibração, para fazermos uma leitura da fita
 // e armazenar em uma variável
 #define threshold_line_sensors 300 //Não sei o valor em especifico, tem que colocar o valor correto.
-#define threshould_ultra 100
+
+#define threshould_ultra 100 //Valor usado como threshold de distancia medido pelo sensor sonoro
 
 //Define a velocidade da serial
 #define velocidade_serial 115200 //9600
@@ -187,26 +188,30 @@ void LogicaDoRobo(){
 	switch(state){
 		case 'P':
 			config_motor = 'P';
-      //Serial.println(digitalRead(pin_bouton_state));
-     if(!digitalRead(pin_bouton_state)) {
-			  delay(5000);
-        state = 'B';
-     }
+
+			//Serial.println(digitalRead(pin_bouton_state));
+			if(!digitalRead(pin_bouton_state)) {
+				delay(5000);
+				state = 'B';
+			}
+
 			break;
 		case 'B':
 
-				if(state_line_sensor2){
-          config_motor = 'R';
-          break;
+			if(state_line_sensor2){
+				config_motor = 'R';
+				break;
+			}
+			
+			if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
+				state = 'A';
+				config_motor = 'F';
+				break;
+			}
+			else{
+				config_motor = 'D';
 				}
-				if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
-					state = 'A';
-					config_motor = 'F';
-					break;
-				}
-				else{
-					  config_motor = 'D';
-				}
+
 			break;
 		case 'A':
 			#if 0
@@ -270,7 +275,7 @@ void LogicaDoRobo(){
 			break;
 		case 'S':
 			//Lógica de encontro com borda
-			//Considerando Sensor 1 (frente esquerda do robô), 2(frente direita) e 3 (de trás)
+			//Considerando Sensor 1 (frente esquerda), 2(frente direita) e 3 (de trás)
 			
 			//Nenhum sensor de linha ativado
 			if(state_line_sensor2 == 0 and state_line_sensor3 == 0){
@@ -279,16 +284,16 @@ void LogicaDoRobo(){
 			//frente do robô achou sensor de linha
 			else if (state_line_sensor2 == 1){
 				config_motor = 'R';
-      ControleDosMotores();
-      delay(1000);
-      config_motor = 'D';
-      ControleDosMotores();
-      delay(500);
+				ControleDosMotores();
+				delay(1000);
+				config_motor = 'D';
+				ControleDosMotores();
+				delay(500);
 			}
 			else if (state_line_sensor3){
-        config_motor = 'F';
-      ControleDosMotores();
-      delay(200);
+				config_motor = 'F';
+				ControleDosMotores();
+				delay(200);
 			}
 			break;
 
