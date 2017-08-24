@@ -102,7 +102,7 @@ Thread BATERY_STATUS;
 // Alvo---'A': Robô encontrou seu alvo
 // Borda---'S': Robô está na borda
 // Outros estado podem ser configurados aqui...
-char state = 'P';
+enum state_robo {P = 0, B, A, S }state=P;
 
 // Variável "config_motor" define a configuração dos motores
 // As configurações possiveis do motor são:
@@ -111,7 +111,7 @@ char state = 'P';
 // Direita--'D': Robô vira pra direita;
 // Esquerda-'E': Robô vira pra esquerda;
 // Ré-------'R': Robô vai pra trás;
-char config_motor = 'P';
+enum state_config_motor {MP = 0, MF, MD, ME, MR }config_motor=MP;
 
 //Distância do sensor ultra sônico
 float distancia_sonora = 0;
@@ -127,6 +127,7 @@ bool state_line_sensor3 = false;
 //Armazena o estado dos sensores de IR "true" para obstáculo detectado e "false" para obstáculo não detectado
 bool state_ir_sensor1 = false; //1-para não detectado 0- para detectado
 bool state_ir_sensor2 = false;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -186,121 +187,120 @@ void LeituraBateryStatus(){
 // ou seja a logica de ataque e defesa...! ahahahah
 void LogicaDoRobo(){
 	switch(state){
-		case 'P':
-			config_motor = 'P';
-
-			//Serial.println(digitalRead(pin_bouton_state));
-			if(!digitalRead(pin_bouton_state)) {
-				delay(5000);
-				state = 'B';
-			}
-
+		case P:
+			config_motor = MP;
+      //Serial.println(digitalRead(pin_bouton_state));
+     if(!digitalRead(pin_bouton_state)) {
+			  delay(5000);
+        state = B;
+     }
 			break;
-		case 'B':
+		case B:
 
-			if(state_line_sensor2){
-				config_motor = 'R';
-				break;
-			}
-			
-			if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
-				state = 'A';
-				config_motor = 'F';
-				break;
-			}
-			else{
-				config_motor = 'D';
+				if(state_line_sensor2){
+          config_motor = MR;
+          break;
+				}
+				if(distancia_sonora < threshould_ultra or !state_ir_sensor2){
+					state = A;
+					config_motor = MF;
+					break;
+				}
+				else{
+					  config_motor = MD;
 				}
 
 			break;
-		case 'A':
+		case A:
 			#if 0
 			//Lógica de ataque do robô
 			//if(state_line_sensor1 = 1 or state_line_sensor2 = 1) state = 'S';
 			//else if (state_line_sensor3 = 1) state = 'S';
 
      if(state_line_sensor2){
-          state = 'S';
+          state = S;
           break;
        }
 
 			if(distancia_sonora > threshould_ultra and state_ir_sensor2){
-				state = 'B';
+				state = B;
 				break;
 			}
 
 			if(distancia_sonora < threshould_ultra and !state_ir_sensor2){
-				config_motor = 'E';
+				config_motor = ME;
         //config jamelly
         //LeituraSensorDeLinha();
         //if(state_line_sensor2 or state_line_sensor3){
-        //  state = 'S';
+        //  state = S;
         //}
         break;
-        
+
 			}
 			else{
 				if(distancia_sonora < threshould_ultra and (!state_ir_sensor1 or !state_ir_sensor2)){
 					if(!state_ir_sensor1){
-						config_motor = 'E';
+						config_motor = ME;
 
 					}
 					else{
-						config_motor = 'D';
+						config_motor = MD;
 					}
 				}
 				else{
-					config_motor = 'F';
+					config_motor = MF;
 				}
 			}
      #endif
+
+
+
     if(distancia_sonora > threshould_ultra  and state_ir_sensor1 and state_ir_sensor2){
-        state = 'B';
+        state = B;
         break;
       }
       //Não sei exatamente qual a referência desses numeros do ultrasônico,  mas acho que nesse if (depois dessa linha) deveria ser "<35"
     else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1 and !state_ir_sensor2){
-        config_motor = 'F';
+        config_motor = MF;
       }
     else if(distancia_sonora < threshould_ultra  and !state_ir_sensor1){
-        config_motor = 'E';
+        config_motor = ME;
       }
     else if (distancia_sonora < threshould_ultra  and !state_ir_sensor2){
-        config_motor = 'D';
+        config_motor = MD;
       }
-      else { 
-        state = 'B';
+      else {
+        state = B;
       }
 
 			break;
-		case 'S':
+		case S:
 			//Lógica de encontro com borda
-			//Considerando Sensor 1 (frente esquerda), 2(frente direita) e 3 (de trás)
-			
+			//Considerando Sensor 1 (frente esquerda do robô), 2(frente direita) e 3 (de trás)
 			//Nenhum sensor de linha ativado
 			if(state_line_sensor2 == 0 and state_line_sensor3 == 0){
-				state = 'B';
+				state = B;
 			}
 			//frente do robô achou sensor de linha
 			else if (state_line_sensor2 == 1){
-				config_motor = 'R';
-				ControleDosMotores();
-				delay(1000);
-				config_motor = 'D';
-				ControleDosMotores();
-				delay(500);
+				config_motor = MR;
+      ControleDosMotores();
+      delay(1000);
+      config_motor = MD;
+      ControleDosMotores();
+      delay(500);
 			}
 			else if (state_line_sensor3){
-				config_motor = 'F';
-				ControleDosMotores();
-				delay(200);
+        config_motor = MF;
+      ControleDosMotores();
+      delay(200);
 			}
 			break;
 
 		//Novos estados do robô podem ser inseridos aqui...
 
 		default:
-			config_motor = 'P';
+			config_motor = MP;
 			break;
 	}
 
@@ -309,35 +309,35 @@ void LogicaDoRobo(){
 //Função para controle dos motores
 void ControleDosMotores(){
 	switch(config_motor){
-		case 'P':
+		case MP:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, HIGH);
 			break;
 
-		case 'F':
+		case MF:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, LOW);
 			break;
 
-		case 'D':
+		case MD:
 			digitalWrite(pin1_motor, LOW);
 			digitalWrite(pin2_motor, LOW);
 			digitalWrite(pin3_motor, HIGH);
 			digitalWrite(pin4_motor, HIGH);
 			break;
 
-		case 'E':
+		case ME:
 			digitalWrite(pin1_motor, HIGH);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, LOW);
 			digitalWrite(pin4_motor, LOW);
 			break;
 
-		case 'R':
+		case MR:
 			digitalWrite(pin1_motor, HIGH);
 			digitalWrite(pin2_motor, HIGH);
 			digitalWrite(pin3_motor, HIGH);
